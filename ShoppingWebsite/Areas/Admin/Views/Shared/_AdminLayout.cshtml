@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin | Shopping Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+</head>
+<body class="sw-admin-body">
+
+    <div class="sw-admin-wrapper">
+
+        <!-- Sidebar -->
+        <aside class="sw-sidebar">
+            <div class="sw-sidebar-header">
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
+                   class="text-decoration-none">
+                    <span class="fw-700 fs-5 text-white">Shopping Store</span>
+                    <span class="sw-admin-badge">Admin</span>
+                </a>
+            </div>
+
+            <nav class="sw-sidebar-nav">
+                <p class="sw-nav-label">Main</p>
+
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
+                   class="sw-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <p class="sw-nav-label mt-3">Catalog</p>
+
+                <a asp-area="Admin" asp-controller="Categories" asp-action="Index"
+                   class="sw-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Categories" ? "active" : "")">
+                    <i class="bi bi-tag"></i>
+                    <span>Categories</span>
+                </a>
+
+                <a asp-area="Admin" asp-controller="Products" asp-action="Index"
+                   class="sw-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" ? "active" : "")">
+                    <i class="bi bi-box-seam"></i>
+                    <span>Products</span>
+                </a>
+
+                <p class="sw-nav-label mt-3">Sales</p>
+
+                <a asp-area="Admin" asp-controller="Orders" asp-action="Index"
+                   class="sw-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Orders" ? "active" : "")">
+                    <i class="bi bi-receipt"></i>
+                    <span>Orders</span>
+                </a>
+
+                <p class="sw-nav-label mt-3">Account</p>
+
+                <a asp-controller="Home" asp-action="Index" asp-area=""
+                   class="sw-nav-link">
+                    <i class="bi bi-shop"></i>
+                    <span>Back to Store</span>
+                </a>
+
+                <form asp-controller="Account" asp-action="Logout" asp-area="" method="post" class="mt-1">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="sw-nav-link w-100 text-start border-0 bg-transparent text-danger">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="sw-admin-main">
+
+            <!-- Top Bar -->
+            <header class="sw-admin-topbar">
+                <h5 class="mb-0 fw-600">@ViewData["Title"]</h5>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="sw-avatar">
+                        @User.Identity!.Name?[0].ToString().ToUpper()
+                    </div>
+                    <span class="small text-muted d-none d-md-inline">@User.Identity.Name</span>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="sw-admin-content">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert sw-alert-success d-flex align-items-center gap-2 mb-4">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>@TempData["Success"]</span>
+                    </div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert sw-alert-danger d-flex align-items-center gap-2 mb-4">
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                        <span>@TempData["Error"]</span>
+                    </div>
+                }
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

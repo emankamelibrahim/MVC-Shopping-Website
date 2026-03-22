@@ -1,0 +1,213 @@
+﻿/* ── Admin Layout ─────────────────────────────── */
+.sw-admin-body {
+    background-color: var(--sw-bg);
+    font-family: 'Inter', sans-serif;
+}
+
+.sw-admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ── Sidebar ──────────────────────────────────── */
+.sw-sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background-color: var(--sw-surface);
+    border-right: 1px solid var(--sw-border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+.sw-sidebar-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--sw-border);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sw-admin-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    background: rgba(37,99,235,0.2);
+    color: var(--sw-primary);
+    padding: 2px 8px;
+    border-radius: 20px;
+    width: fit-content;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.sw-sidebar-nav {
+    padding: 1rem 0.75rem;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.sw-nav-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--sw-muted);
+    padding: 0 0.75rem;
+    margin-bottom: 4px;
+}
+
+.sw-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 8px;
+    color: var(--sw-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
+    margin-bottom: 2px;
+    cursor: pointer;
+}
+
+    .sw-nav-link:hover {
+        background-color: var(--sw-surface-2);
+        color: var(--sw-text);
+    }
+
+    .sw-nav-link.active {
+        background-color: rgba(37,99,235,0.15);
+        color: var(--sw-primary);
+    }
+
+    .sw-nav-link i {
+        font-size: 1rem;
+        width: 18px;
+        text-align: center;
+    }
+
+/* ── Main Content ─────────────────────────────── */
+.sw-admin-main {
+    margin-left: 240px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.sw-admin-topbar {
+    background-color: var(--sw-surface);
+    border-bottom: 1px solid var(--sw-border);
+    padding: 0.875rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+}
+
+.sw-admin-content {
+    padding: 1.5rem;
+    flex: 1;
+}
+
+/* ── Stat Cards ───────────────────────────────── */
+.sw-stat-card {
+    background-color: var(--sw-surface);
+    border: 1px solid var(--sw-border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.sw-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+    .sw-stat-icon.blue {
+        background: rgba(37,99,235,0.15);
+        color: #2563EB;
+    }
+
+    .sw-stat-icon.green {
+        background: rgba(34,197,94,0.15);
+        color: #22C55E;
+    }
+
+    .sw-stat-icon.yellow {
+        background: rgba(234,179,8,0.15);
+        color: #EAB308;
+    }
+
+    .sw-stat-icon.purple {
+        background: rgba(168,85,247,0.15);
+        color: #A855F7;
+    }
+
+.sw-stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.sw-stat-label {
+    font-size: 0.8rem;
+    color: var(--sw-muted);
+}
+
+/* ── Admin Table ──────────────────────────────── */
+.sw-admin-table {
+    background-color: var(--sw-surface);
+    border: 1px solid var(--sw-border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+    .sw-admin-table .table {
+        margin-bottom: 0;
+        color: var(--sw-text);
+    }
+
+        .sw-admin-table .table thead th {
+            background-color: var(--sw-surface-2);
+            color: var(--sw-muted);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-color: var(--sw-border);
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+        }
+
+        .sw-admin-table .table tbody td {
+            border-color: var(--sw-border);
+            padding: 0.85rem 1rem;
+            vertical-align: middle;
+        }
+
+        .sw-admin-table .table tbody tr:hover {
+            background-color: var(--sw-surface-2);
+        }
+
+/* ── Admin Form Card ──────────────────────────── */
+.sw-admin-form-card {
+    background-color: var(--sw-surface);
+    border: 1px solid var(--sw-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    max-width: 700px;
+}

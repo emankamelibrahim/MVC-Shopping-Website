@@ -1,0 +1,142 @@
+﻿@model ShoppingWebsite.Models.ViewModels.Catalog.ProductDetailsVM
+@{
+    ViewData["Title"] = Model.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb sw-breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-controller="Catalog" asp-action="Index" class="text-muted text-decoration-none">Catalog</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a asp-controller="Catalog" asp-action="Index"
+                   asp-route-categoryId="@Model.CategoryId"
+                   class="text-muted text-decoration-none">@Model.CategoryName</a>
+            </li>
+            <li class="breadcrumb-item active text-primary">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+
+        <!-- Product Image -->
+        <div class="col-lg-5">
+            <div class="sw-card p-3 text-center">
+                <img src="@Model.ImageUrl"
+                     alt="@Model.Name"
+                     class="img-fluid rounded"
+                     style="max-height: 400px; object-fit: contain;" />
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-lg-7">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="text-muted small">@Model.CategoryName</span>
+                <span class="text-muted small">•</span>
+                <span class="text-muted small">SKU: @Model.SKU</span>
+            </div>
+
+            <h1 class="fw-700 mb-3" style="font-size: 1.8rem;">@Model.Name</h1>
+
+            <!-- Stock Badge -->
+            <div class="mb-3">
+                @if (Model.StockQuantity > 10)
+                {
+                    <span class="sw-stock-badge sw-badge-in">
+                        <i class="bi bi-check-circle me-1"></i>In Stock (@Model.StockQuantity available)
+                    </span>
+                }
+                else if (Model.StockQuantity > 0)
+                {
+                    <span class="sw-stock-badge sw-badge-low">
+                        <i class="bi bi-exclamation-circle me-1"></i>Low Stock (only @Model.StockQuantity left)
+                    </span>
+                }
+                else
+                {
+                    <span class="sw-stock-badge sw-badge-out">
+                        <i class="bi bi-x-circle me-1"></i>Out of Stock
+                    </span>
+                }
+            </div>
+
+            <!-- Price -->
+            <div class="mb-4">
+                <span style="font-size: 2.2rem; font-weight: 700; color: var(--sw-primary);">
+                    $@Model.Price.ToString("0.00")
+                </span>
+            </div>
+
+            <!-- Description -->
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <div class="mb-4">
+                    <h6 class="fw-600 text-muted text-uppercase mb-2"
+                        style="font-size: 0.75rem; letter-spacing: 1px;">
+                        Description
+                    </h6>
+                    <p class="text-muted" style="line-height: 1.7;">@Model.Description</p>
+                </div>
+            }
+
+            <hr style="border-color: var(--sw-border);" />
+
+            <!-- Add to Cart -->
+            @if (Model.IsInStock)
+            {
+                <form asp-controller="Cart" asp-action="Add" method="post" class="d-flex gap-3 align-items-center mt-4">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" value="@Model.ProductId" />
+                    <div class="d-flex align-items-center sw-qty-control">
+                        <button type="button" class="sw-qty-btn" onclick="changeQty(-1)">
+                            <i class="bi bi-dash"></i>
+                        </button>
+                        <input type="number" name="quantity" id="qtyInput"
+                               value="1" min="1" max="@Model.StockQuantity"
+                               class="sw-qty-input" />
+                        <button type="button" class="sw-qty-btn" onclick="changeQty(1)">
+                            <i class="bi bi-plus"></i>
+                        </button>
+                    </div>
+                    <button type="submit" class="btn btn-primary px-5 py-2 fw-600">
+                        <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                    </button>
+                </form>
+            }
+            else
+            {
+                <button class="btn btn-secondary px-5 py-2 mt-4" disabled>
+                    <i class="bi bi-x-circle me-2"></i>Out of Stock
+                </button>
+            }
+
+            <!-- Back -->
+            <div class="mt-4">
+                <a asp-controller="Catalog" asp-action="Index"
+                   asp-route-categoryId="@Model.CategoryId"
+                   class="text-muted text-decoration-none small">
+                    <i class="bi bi-arrow-left me-1"></i>Back to @Model.CategoryName
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function changeQty(delta) {
+            const input = document.getElementById('qtyInput');
+            const max = parseInt(input.max);
+            const min = parseInt(input.min);
+            let val = parseInt(input.value) + delta;
+            if (val < min) val = min;
+            if (val > max) val = max;
+            input.value = val;
+        }
+    </script>
+}

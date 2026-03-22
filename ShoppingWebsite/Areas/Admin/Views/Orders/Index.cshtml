@@ -1,0 +1,65 @@
+﻿@model ShoppingWebsite.Models.ViewModels.Admin.AdminOrderListVM
+@{
+    ViewData["Title"] = "Orders";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<!-- Status Filter -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <p class="text-muted mb-0">@Model.Orders.Count() orders</p>
+    <div class="btn-group btn-group-sm">
+        <a asp-action="Index"
+           class="btn @(string.IsNullOrEmpty(Model.SelectedStatus) ? "btn-primary" : "btn-outline-secondary")">
+            All
+        </a>
+        @foreach (var status in Enum.GetNames<ShoppingWebsite.Data.Entities.OrderStatus>())
+        {
+            <a asp-action="Index" asp-route-status="@status"
+               class="btn @(Model.SelectedStatus == status ? "btn-primary" : "btn-outline-secondary")">
+                @status
+            </a>
+        }
+    </div>
+</div>
+
+<div class="sw-admin-table">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model.Orders)
+                {
+                    <tr>
+                        <td class="fw-600">@order.OrderNumber</td>
+                        <td>
+                            <p class="mb-0 small fw-600">@order.CustomerName</p>
+                            <p class="mb-0 text-muted" style="font-size:0.75rem;">@order.CustomerEmail</p>
+                        </td>
+                        <td class="text-muted small">@order.OrderDate.ToString("MMM dd, yyyy")</td>
+                        <td class="text-muted small">@order.ItemCount</td>
+                        <td class="fw-600 text-primary">$@order.TotalAmount.ToString("0.00")</td>
+                        <td>
+                            <span class="sw-status-badge @order.StatusClass">@order.StatusDisplay</span>
+                        </td>
+                        <td class="text-end">
+                            <a asp-action="Details" asp-route-id="@order.OrderId"
+                               class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

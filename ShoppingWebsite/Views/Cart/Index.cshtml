@@ -1,0 +1,187 @@
+﻿@model ShoppingWebsite.Models.ViewModels.Cart.CartVM
+@{
+    ViewData["Title"] = "My Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+
+    <h4 class="fw-700 mb-4">
+        <i class="bi bi-cart3 me-2 text-primary"></i>My Cart
+        <span class="text-muted fs-6 fw-400 ms-2">(@Model.ItemCount items)</span>
+    </h4>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert sw-alert-success d-flex align-items-center gap-2 mb-4">
+            <i class="bi bi-check-circle-fill"></i>
+            <span>@TempData["Success"]</span>
+        </div>
+    }
+
+    @if (!Model.Items.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-cart-x" style="font-size: 4rem; color: var(--sw-muted);"></i>
+            <h5 class="mt-3 text-muted">Your cart is empty</h5>
+            <a asp-controller="Catalog" asp-action="Index" class="btn btn-primary mt-3 px-5">
+                <i class="bi bi-grid me-2"></i>Browse Catalog
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+
+            <!-- Cart Items -->
+            <!-- Cart Items -->
+            <div class="col-lg-8">
+                @foreach (var item in Model.Items)
+                {
+                    <div class="sw-card p-3 mb-3">
+                        <div class="row align-items-center g-3">
+
+                            <!-- Image -->
+                            <div class="col-3 col-md-2">
+                                <img src="@item.ImageUrl"
+                                     alt="@item.ProductName"
+                                     class="img-fluid rounded"
+                                     style="height: 70px; width: 70px; object-fit: cover;" />
+                            </div>
+
+                            <!-- Name & Price -->
+                            <div class="col-9 col-md-4">
+                                <p class="fw-600 mb-0">@item.ProductName</p>
+                                <span class="text-muted small">$@item.UnitPrice.ToString("0.00") each</span>
+                            </div>
+
+                            <!-- Quantity -->
+                            <div class="col-6 col-md-3">
+                                <form asp-action="Update" method="post" class="d-flex align-items-center gap-2"
+                                      id="form_@item.CartItemId">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="cartItemId" value="@item.CartItemId" />
+                                    <div class="sw-qty-control">
+                                        <button type="button" class="sw-qty-btn"
+                                                onclick="changeItemQty('@item.CartItemId', -1, @item.MaxQuantity, @item.UnitPrice)">
+                                            <i class="bi bi-dash"></i>
+                                        </button>
+                                        <input type="number"
+                                               name="quantity"
+                                               id="qty_@item.CartItemId"
+                                               value="@item.Quantity"
+                                               min="1"
+                                               max="@item.MaxQuantity"
+                                               class="sw-qty-input"
+                                               readonly />
+                                        <button type="button" class="sw-qty-btn"
+                                                onclick="changeItemQty('@item.CartItemId', 1, @item.MaxQuantity, @item.UnitPrice)">
+                                            <i class="bi bi-plus"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Line Total & Remove -->
+                            <div class="col-6 col-md-3 text-end">
+                                <p class="sw-card-price mb-1" id="line_@item.CartItemId">
+                                    $@item.LineTotal.ToString("0.00")
+                                </p>
+                                <form asp-action="Remove" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="cartItemId" value="@item.CartItemId" />
+                                    <button type="submit" class="btn btn-link text-danger p-0 small">
+                                        <i class="bi bi-trash me-1"></i>Remove
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="sw-card p-4">
+                    <h6 class="fw-700 text-uppercase mb-3"
+                        style="font-size: 0.75rem; letter-spacing: 1px; color: var(--sw-muted);">
+                        Order Summary
+                    </h6>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Subtotal (@Model.ItemCount items)</span>
+                        <span class="fw-600 cart-total">$@Model.Total.ToString("0.00")</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Shipping</span>
+                        <span class="text-success fw-600">Free</span>
+                    </div>
+
+                    <hr style="border-color: var(--sw-border);" />
+
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="fw-700">Total</span>
+                        <span class="fw-700 fs-5 text-primary cart-total">$@Model.Total.ToString("0.00")</span>
+                    </div>
+
+                    <a asp-controller="Orders" asp-action="Checkout"
+                       class="btn btn-primary w-100 py-2 fw-600">
+                        <i class="bi bi-lock me-2"></i>Proceed to Checkout
+                    </a>
+
+                    <a asp-controller="Catalog" asp-action="Index"
+                       class="btn btn-outline-secondary w-100 py-2 mt-2">
+                        <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        const unitPrices = {
+            @foreach (var item in Model.Items)
+            {
+                    @:@item.CartItemId: @item.UnitPrice.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture),
+            }
+        };
+
+        let debounceTimers = {};
+
+        function changeItemQty(itemId, delta, max, unitPrice) {
+            const input = document.getElementById('qty_' + itemId);
+            let val = parseInt(input.value) + delta;
+            if (val < 1) val = 1;
+            if (val > max) val = max;
+            input.value = val;
+
+            // Update line total instantly
+            const lineTotal = (val * unitPrices[itemId]).toFixed(2);
+            document.getElementById('line_' + itemId).textContent = '$' + lineTotal;
+
+            // Update order summary total
+            recalcTotal();
+
+            // Auto-submit after 600ms debounce
+            clearTimeout(debounceTimers[itemId]);
+            debounceTimers[itemId] = setTimeout(() => {
+                document.getElementById('form_' + itemId).submit();
+            }, 600);
+        }
+
+        function recalcTotal() {
+            let total = 0;
+            document.querySelectorAll('[id^="line_"]').forEach(el => {
+                total += parseFloat(el.textContent.replace('$', ''));
+            });
+
+            const totalEls = document.querySelectorAll('.cart-total');
+            totalEls.forEach(el => el.textContent = '$' + total.toFixed(2));
+        }
+    </script>
+}
